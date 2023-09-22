@@ -1,0 +1,8 @@
+POST http://localhost:3000/register/
+
+{
+    "username": "karthiknani",
+    "password": "1590",
+    "name": "Karthik",
+    "gender": "male"
+}
