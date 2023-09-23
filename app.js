@@ -68,13 +68,13 @@ app.post("/register/", async (request, response) => {
           '${gender}'
         );`;
     const dbResponse = await db.run(createUserQuery);
-    response.send(`User created succesfully`);
+    response.send(`User created successfully`);
   } else if (password.length < 6 && dbUser === undefined) {
-    response.status = 400;
-    response.send("Password is too short");
+    response.status(400);
+    response.send(`Password is too short`);
   } else {
-    response.status = 400;
-    response.send("User already exists");
+    response.status(400);
+    response.send(`User already exists`);
   }
 });
 
@@ -114,7 +114,7 @@ SELECT user_id from user where username='${request.username}';`;
   LoggedUserId = getUserId.user_id;
 
   const tweetsQuery = `
-  SELECT T.username as username,tweet, date_time as dateTime from (user inner join follower on user.user_id=follower.following_user_id) as T inner join tweet on T.following_user_id=tweet.user_id where follower.follower_user_id='${LoggedUserId}' order by dateTime ASC limit 4;`;
+  SELECT T.username as username,tweet, date_time as dateTime from (user inner join follower on user.user_id=follower.following_user_id) as T inner join tweet on T.following_user_id=tweet.user_id where follower.follower_user_id='${LoggedUserId}' order by dateTime DESC limit 4;`;
   const getTweets = await db.all(tweetsQuery);
   response.send(getTweets);
 });
@@ -171,7 +171,7 @@ SELECT user_id from user where username='${request.username}';`;
           (select count(reply_id) from reply where tweet_id=${tweetId}) as replies,
      date_time as dateTime from tweet where tweet_id=${tweetId};
     `;
-    const result = await db.all(resultQuery);
+    const result = await db.get(resultQuery);
     response.send(result);
   } else {
     response.status(401);
@@ -324,7 +324,7 @@ app.delete(
     tweet_id = '${tweetId}';
   `;
       await db.run(deleteTweetQuery);
-      response.send("Tweet Removed");
+      response.send(`Tweet Removed`);
     } else {
       response.status(401);
       response.send("Invalid Request");
